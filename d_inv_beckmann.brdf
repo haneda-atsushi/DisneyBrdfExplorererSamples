@@ -1,0 +1,43 @@
+analytic
+
+# variables go here...
+# only floats supported right now.
+# [type] [name] [min val] [max val] [default val]
+
+::begin parameters
+float m	    0.001 1.0 .1
+float scale 0.0   1000.0 1.0
+::end parameters
+
+::begin shader
+
+float invBeckmann( float m, float dot_n_h )
+{
+	const float INV_MATH_PI = 1.0 / 3.141592;
+	const float A		    = 4.0;
+
+	float alpha   = m * m;
+	float alpha_2 = alpha * alpha;
+
+	float cos_h_2 = dot_n_h * dot_n_h;		
+	float sin_h_2 = 1.0 - cos_h_2;
+	float sin_h_4 = sin_h_2 * sin_h_2;
+
+	float term0   = INV_MATH_PI / ( ( 1.0 + A * alpha_2 ) * sin_h_4 );
+	float term1   = sin_h_4 + A * exp( - cos_h_2 / ( alpha_2 * sin_h_2 ) );
+
+	return term0 * term1;
+}
+
+vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
+{
+    vec3 H	 	 = normalize( L + V );
+    float NdotH  = dot(N, H);
+
+    float D	 	 = invBeckmann( m, NdotH );
+	D		    *= dot( N, L ) > 0.0 ? 1.0 : 0.0;
+
+    return vec3( D );
+}
+
+::end shader
