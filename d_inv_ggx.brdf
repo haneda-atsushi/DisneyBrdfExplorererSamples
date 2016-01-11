@@ -1,0 +1,41 @@
+analytic
+
+# variables go here...
+# only floats supported right now.
+# [type] [name] [min val] [max val] [default val]
+
+::begin parameters
+float alpha 0.001 1 .1
+::end parameters
+
+# Then comes the shader. This should be GLSL code
+# that defines a function called BRDF (although you can
+# add whatever else you want too, like sqr() below).
+
+::begin shader
+
+const float MATH_PI		= 3.14159265358979323846;
+const float INV_MATH_PI = 1.0 / MATH_PI;
+
+float invGGX( float alpha, float cos_theta )
+{
+	const float A = 4.0;
+
+	float alpha_2 = alpha * alpha;
+	float term0   = 1.0 + A * alpha_2;
+	float term1   = ( cos_theta - alpha_2 * cos_theta ) * cos_theta + alpha_2;
+	float term2   = 1.0 + A * alpha_2 * alpha_2;
+	
+	return INV_MATH_PI * term0 * term2 / ( term0 * term1 * term1 );
+ }
+
+vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
+{
+    vec3 H	   = normalize( L + V );
+    float D    = invGGX( alpha, dot( N, H ) );
+	D		  *= dot( N, L ) > 0.0 ? 1.0 : 0.0;
+
+    return vec3( D );
+}
+
+::end shader
