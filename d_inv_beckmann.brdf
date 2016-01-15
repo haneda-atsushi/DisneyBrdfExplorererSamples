@@ -5,36 +5,36 @@ analytic
 # [type] [name] [min val] [max val] [default val]
 
 ::begin parameters
-float m	    0.001 1.0 .1
+float m        0.001 1.0 .1
 ::end parameters
 
 ::begin shader
 
 float invBeckmann( float m, float dot_n_h )
 {
-	const float INV_MATH_PI = 1.0 / 3.141592;
-	const float A		    = 4.0;
+    const float INV_MATH_PI = 1.0 / 3.141592;
+    const float A            = 4.0;
 
-	float alpha   = m * m;
-	float alpha_2 = alpha * alpha;
+    float alpha   = m * m;
+    float alpha_2 = alpha * alpha;
 
-	float cos_h_2 = dot_n_h * dot_n_h;		
-	float sin_h_2 = 1.0 - cos_h_2;
-	float sin_h_4 = sin_h_2 * sin_h_2;
+    float cos_h_2 = dot_n_h * dot_n_h;
+    float sin_h_2 = 1.0 - cos_h_2;
+    float sin_h_4 = sin_h_2 * sin_h_2;
 
-	float term0   = ( 1.0 + A * alpha_2 ) * sin_h_4;
-	float term1   = sin_h_4 + A * exp( - cos_h_2 / ( alpha_2 * sin_h_2 ) );
+    float term0   = ( 1.0 + A * alpha_2 ) * sin_h_4;
+    float term1   = sin_h_4 + A * exp( - cos_h_2 / ( alpha_2 * sin_h_2 ) );
 
-	return INV_MATH_PI * term1 / term0;
+    return INV_MATH_PI * term1 / term0;
 }
 
 vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
 {
-    vec3 H	 	 = normalize( L + V );
+    vec3 H       = normalize( L + V );
     float NdotH  = max( dot(N, H), 0.0 );
 
-    float D	 	 = invBeckmann( m, NdotH );
-	D		    *= dot( N, L ) > 0.0 ? 1.0 : 0.0;
+    float D      = invBeckmann( m, NdotH );
+    D           *= dot( N, L ) > 0.0 ? 1.0 : 0.0;
 
     return vec3( D );
 }

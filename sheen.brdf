@@ -20,7 +20,7 @@ analytic
 ::begin parameters
 color baseColor 1.0 0.0 0.0
 float metallic  0 1 0
-float sheen		0 1 1.0
+float sheen        0 1 1.0
 float sheenTint 0 1 .5
 ::end parameters
 
@@ -30,7 +30,7 @@ const float PI = 3.14159265358979323846;
 
 float SchlickFresnel(float u)
 {
-    float m = clamp(1-u, 0, 1);
+    float m  = clamp(1-u, 0, 1);
     float m2 = m*m;
     return m2*m2*m; // pow(m,5)
 }
@@ -56,12 +56,12 @@ vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
     vec3 Ctint  = Cdlum > 0 ? Cdlin/Cdlum : vec3(1); // normalize lum. to isolate hue+sat
     vec3 Csheen = mix(vec3(1), Ctint, sheenTint);
 
-    float FH = SchlickFresnel(LdotH);
+    float FH    = SchlickFresnel(LdotH);
 
     // sheen
     vec3 Fsheen = FH * sheen * Csheen;
 
-	return Fsheen * (1-metallic);
+    return Fsheen * (1-metallic);
 }
 
 ::end shader

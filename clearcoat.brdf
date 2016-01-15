@@ -31,7 +31,7 @@ float sqr(float x) { return x*x; }
 
 float SchlickFresnel(float u)
 {
-    float m = clamp(1-u, 0, 1);
+    float m  = clamp(1-u, 0, 1);
     float m2 = m*m;
     return m2*m2*m; // pow(m,5)
 }
@@ -39,8 +39,9 @@ float SchlickFresnel(float u)
 float GTR1(float NdotH, float a)
 {
     if (a >= 1) return 1/PI;
+
     float a2 = a*a;
-    float t = 1 + (a2-1)*NdotH*NdotH;
+    float t  = 1 + (a2-1)*NdotH*NdotH;
     return (a2-1) / (PI*log(a2)*t);
 }
 
@@ -61,12 +62,12 @@ vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
     float NdotH = dot(N,H);
     float LdotH = dot(L,H);
 
-    float FH = SchlickFresnel(LdotH);
+    float FH    = SchlickFresnel(LdotH);
 
     // clearcoat (ior = 1.5 -> F0 = 0.04)
-    float Dr = GTR1(NdotH, mix( 0.1, 0.001, clearcoatGloss ) );
-    float Fr = mix( 0.04, 1.0, FH);
-    float Gr = smithG_GGX( NdotL, 0.25 ) * smithG_GGX( NdotV, 0.25 );
+    float Dr    = GTR1(NdotH, mix( 0.1, 0.001, clearcoatGloss ) );
+    float Fr    = mix( 0.04, 1.0, FH);
+    float Gr    = smithG_GGX( NdotL, 0.25 ) * smithG_GGX( NdotV, 0.25 );
 
     return 0.25*clearcoat*Gr*Fr*Dr;
 }
