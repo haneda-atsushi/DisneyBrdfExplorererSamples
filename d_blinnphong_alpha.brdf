@@ -1,0 +1,37 @@
+analytic
+
+# variables go here...
+# only floats supported right now.
+# [type] [name] [min val] [max val] [default val]
+
+::begin parameters
+float roughness 0.001 1 0.2
+bool normalized 1
+::end parameters
+
+# Then comes the shader. This should be GLSL code
+# that defines a function called BRDF (although you can
+# add whatever else you want too, like sqr() below).
+
+::begin shader
+
+const float PI = 3.14159265358979323846;
+
+vec3 BRDF( vec3 L, vec3 V, vec3 N, vec3 X, vec3 Y )
+{
+    float alpha      = roughness * roughness;
+    float alpha_2    = alpha * alpha;
+
+    vec3 H           = normalize( L + V );
+    float dot_n_h    = max( dot( N, H ), 0.0 );
+    float pow_value  = 2.0 /  alpha_2 - 2.0;
+
+    float D          = pow( dot_n_h, pow_value );
+    D               *= normalized ? 1.0 / ( PI * alpha_2 ) : 1.0;
+
+    D               *= dot( N, L ) > 0.0 ? 1.0 : 0.0;
+
+    return vec3(D);
+}
+
+::end shader
