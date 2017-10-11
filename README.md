@@ -1,5 +1,5 @@
 # DisneyBrdfExplorererSamples
-Some brdf shader examples for Disney BRDF Explorer.
+   * Some brdf shader examples for Disney BRDF Explorer.
 
 ## Reference 
 * BRDF Explorer
